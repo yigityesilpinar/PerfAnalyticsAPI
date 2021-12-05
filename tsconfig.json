@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true, // required for Decorators
+    "emitDecoratorMetadata": true,  // required for Decorators
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "build",
+    "baseUrl": ".",
+    "paths": {
+      "app/*": [
+        "src/app/*"
+      ],
+      "*": ["node_modules/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

@@ -1,0 +1,14 @@
+version: '3.9' # optional since v1.27.0
+services:
+  db:
+    image: postgres:11
+    container_name: postgres-local-test
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=local-test 
+    # #! This would persist data, without we always start with clean
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data
