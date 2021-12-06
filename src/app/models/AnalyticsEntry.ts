@@ -16,7 +16,7 @@ class AnalyticsEntry extends Model {
   analyzeSessionUUID: string
 
   @Column
-  analyzeStartTimestamp: number
+  analyzeStartAt: Date
 
   @Column
   ttfb: number

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { analyticsAccountRepository, analyticsEntryRepository } from '../../sequelize'
-import { onAccountNotFound, onBadRequest, onInternalError } from '../utils'
+import { makeFilterByDateRange, onAccountNotFound, onBadRequest, onInternalError } from '../utils'
 
 export const makeAnalyticsEntryRoute = (routes: Router) => {
   routes.post('/account/:id/analytics', async (req, res) => {
@@ -27,6 +27,34 @@ export const makeAnalyticsEntryRoute = (routes: Router) => {
       } else {
         return onAccountNotFound(res)
       }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+      return onInternalError(res)
+    }
+  })
+
+  routes.get('/account/:id/analytics', async (req, res) => {
+    if (!req.params.id) {
+      return onBadRequest(res)
+    }
+    try {
+      const { id } = req.params
+      const data = await analyticsEntryRepository.findAll({
+        where: {
+          accountId: id,
+          ...makeFilterByDateRange({
+            fieldName: 'analyzeStartAt',
+            start: typeof req.query.start === 'string' ? req.query.start : undefined,
+            end: typeof req.query.end === 'string' ? req.query.end : undefined
+          })
+        }
+      })
+      // eslint-disable-next-line no-console
+      res.status(200).json({
+        status: 'ok',
+        data
+      })
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)

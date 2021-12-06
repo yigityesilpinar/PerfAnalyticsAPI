@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Op, WhereOptions } from 'sequelize'
 
 export const onAccountNotFound = (res: Response) =>
   res.status(404).json({
@@ -17,3 +18,38 @@ export const onInternalError = (res: Response) =>
     status: 'error',
     message: 'Internal server error'
   })
+
+interface MakeFilterByDateRangeOptions {
+  fieldName: string
+  start: string | undefined
+  end: string | undefined
+}
+export const makeFilterByDateRange: (options: MakeFilterByDateRangeOptions) => WhereOptions = ({
+  fieldName,
+  start,
+  end
+}) => ({
+  ...(start && end
+    ? {
+        [fieldName]: {
+          [Op.between]: [start, end]
+        }
+      }
+    : {
+        ...(start
+          ? {
+              [fieldName]: {
+                [Op.gte]: start
+              }
+            }
+          : {
+              ...(end
+                ? {
+                    [fieldName]: {
+                      [Op.lte]: end
+                    }
+                  }
+                : {})
+            })
+      })
+})

@@ -10,7 +10,7 @@ allowedDomains:string
 
 ./node_modules/.bin/sequelize model:generate --name AnalyticsEntry --attributes \
 analyzeSessionUUID:string,\
-analyzeStartTimestamp:decimal,\
+analyzeStartAt:date,\
 ttfb:decimal,\
 fcp:decimal,\
 requestTime:decimal,\
@@ -27,7 +27,7 @@ domComplete:decimal
 
 ./node_modules/.bin/sequelize model:generate --name ResourceAnalyticsEntry --attributes \
 analyzeSessionUUID:string,\
-analyzeStartTimestamp:decimal,\
+analyzeStartAt:date,\
 initiatorType:string,\
 name:string,\
 requestTime:decimal,\

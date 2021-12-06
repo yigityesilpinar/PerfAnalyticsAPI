@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   AnalyticsEntry.init({
     analyzeSessionUUID: DataTypes.STRING,
-    analyzeStartTimestamp: DataTypes.DECIMAL,
+    analyzeStartAt: DataTypes.DATE,
     ttfb: DataTypes.DECIMAL,
     fcp: DataTypes.DECIMAL,
     requestTime: DataTypes.DECIMAL,

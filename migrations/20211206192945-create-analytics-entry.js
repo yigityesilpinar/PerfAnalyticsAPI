@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('ResourceAnalyticsEntries', {
+    await queryInterface.createTable('AnalyticsEntries', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,14 +11,14 @@ module.exports = {
       analyzeSessionUUID: {
         type: Sequelize.STRING
       },
-      analyzeStartTimestamp: {
+      analyzeStartAt: {
+        type: Sequelize.DATE
+      },
+      ttfb: {
         type: Sequelize.DECIMAL
       },
-      initiatorType: {
-        type: Sequelize.STRING
-      },
-      name: {
-        type: Sequelize.STRING
+      fcp: {
+        type: Sequelize.DECIMAL
       },
       requestTime: {
         type: Sequelize.DECIMAL
@@ -26,10 +26,31 @@ module.exports = {
       responseTime: {
         type: Sequelize.DECIMAL
       },
-      fetchTime: {
+      dnsLookUp: {
+        type: Sequelize.DECIMAL
+      },
+      connectionTime: {
+        type: Sequelize.DECIMAL
+      },
+      tlsTime: {
+        type: Sequelize.DECIMAL
+      },
+      domContentLoad: {
         type: Sequelize.DECIMAL
       },
       redirectTime: {
+        type: Sequelize.DECIMAL
+      },
+      redirectCount: {
+        type: Sequelize.DECIMAL
+      },
+      unloadTime: {
+        type: Sequelize.DECIMAL
+      },
+      domInteractive: {
+        type: Sequelize.DECIMAL
+      },
+      domComplete: {
         type: Sequelize.DECIMAL
       },
       createdAt: {
@@ -43,6 +64,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('ResourceAnalyticsEntries');
+    await queryInterface.dropTable('AnalyticsEntries');
   }
 };

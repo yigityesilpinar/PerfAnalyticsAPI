@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { analyticsAccountRepository, resourceAnalyticsEntryRepository } from '../../sequelize'
-import { onAccountNotFound, onBadRequest, onInternalError } from '../utils'
+import { makeFilterByDateRange, onAccountNotFound, onBadRequest, onInternalError } from '../utils'
 
 export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
   routes.post('/account/:id/resourceAnalytics', async (req, res) => {
@@ -41,7 +41,12 @@ export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
       const { id } = req.params
       const data = await resourceAnalyticsEntryRepository.findAll({
         where: {
-          accountId: id
+          accountId: id,
+          ...makeFilterByDateRange({
+            fieldName: 'analyzeStartAt',
+            start: typeof req.query.start === 'string' ? req.query.start : undefined,
+            end: typeof req.query.end === 'string' ? req.query.end : undefined
+          })
         }
       })
       // eslint-disable-next-line no-console

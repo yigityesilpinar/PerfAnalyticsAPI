@@ -8,7 +8,7 @@ const app = express()
 
 import cors, { CorsOptions } from 'cors'
 
-const allowedOrigins = ['http://localhost:3000']
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:9000']
 const corsOptions: CorsOptions = {
   methods: 'POST',
   preflightContinue: true,

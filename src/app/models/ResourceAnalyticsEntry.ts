@@ -23,7 +23,7 @@ class ResourceAnalyticsEntry extends Model {
   analyzeSessionUUID: string
 
   @Column
-  analyzeStartTimestamp: number
+  analyzeStartAt: Date
 
   @Column
   requestTime: number

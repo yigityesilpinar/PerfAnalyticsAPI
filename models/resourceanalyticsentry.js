@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   ResourceAnalyticsEntry.init({
     analyzeSessionUUID: DataTypes.STRING,
-    analyzeStartTimestamp: DataTypes.DECIMAL,
+    analyzeStartAt: DataTypes.DATE,
     initiatorType: DataTypes.STRING,
     name: DataTypes.STRING,
     requestTime: DataTypes.DECIMAL,
