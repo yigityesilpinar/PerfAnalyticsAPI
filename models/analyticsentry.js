@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     redirectCount: DataTypes.DECIMAL,
     unloadTime: DataTypes.DECIMAL,
     domInteractive: DataTypes.DECIMAL,
-    domComplete: DataTypes.DECIMAL
+    domComplete: DataTypes.DECIMAL,
+    windowLoad: DataTypes.DECIMAL
   }, {
     sequelize,
     modelName: 'AnalyticsEntry',

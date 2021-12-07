@@ -53,6 +53,9 @@ module.exports = {
       domComplete: {
         type: Sequelize.DECIMAL
       },
+      windowLoad: {
+        type: Sequelize.DECIMAL
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

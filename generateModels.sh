@@ -23,7 +23,8 @@ redirectTime:decimal,\
 redirectCount:decimal,\
 unloadTime:decimal,\
 domInteractive:decimal,\
-domComplete:decimal
+domComplete:decimal,\
+windowLoad:decimal
 
 ./node_modules/.bin/sequelize model:generate --name ResourceAnalyticsEntry --attributes \
 analyzeSessionUUID:string,\

@@ -56,6 +56,9 @@ class AnalyticsEntry extends Model {
 
   @Column
   domContentLoad: number
+
+  @Column
+  windowLoad: number
 }
 
 export default AnalyticsEntry
