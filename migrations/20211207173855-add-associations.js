@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.sequelize.query( `ALTER TABLE "AnalyticsAccounts" ALTER COLUMN "id" SET DATA TYPE BIGINT;`)
-    await queryInterface.sequelize.query( `ALTER TABLE "ResourceAnalyticsEntries" ALTER COLUMN "name" SET DATA TYPE VARCHAR(750);`)
+    await queryInterface.sequelize.query( `ALTER TABLE "ResourceAnalyticsEntries" ALTER COLUMN "name" SET DATA TYPE VARCHAR(2000);`)
     await queryInterface.addColumn('AnalyticsEntries', 'accountId', Sequelize.BIGINT, {})
     await queryInterface.addConstraint('AnalyticsEntries', {
       fields: ['accountId'],

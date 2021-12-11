@@ -1,14 +1,18 @@
 import express from 'express'
+import helmet from 'helmet'
+import compression from 'compression'
+import cors, { CorsOptions } from 'cors'
+
+import swaggerUi from 'swagger-ui-express'
 
 import routes from './routes'
+import swaggerSpec from './swagger'
 
 const port = process.env.PORT || 8080
 
 const app = express()
 
-import cors, { CorsOptions } from 'cors'
-
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:9000']
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:9000']
 const corsOptions: CorsOptions = {
   methods: 'POST',
   preflightContinue: true,
@@ -31,10 +35,15 @@ const corsOptions: CorsOptions = {
   }
 }
 
+app.use(helmet())
+app.use(compression())
 app.use(express.json({ limit: '4mb' }))
 app.use(cors(corsOptions))
 app.options('*', cors(corsOptions))
 app.use(routes)
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use('/api-docs', (req, res) => res.json(swaggerSpec))
 
 app.listen(port)
 
