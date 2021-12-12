@@ -45,3 +45,15 @@ Sequelize CLI Model Generation
 ```
 generateModels.sh
 ```
+
+# Summary
+
+- REST API
+- Developed with typescript
+- CI & CD with github workflows 
+- eslint for linting
+- mocha, chai and supertest for tests
+- utilize autocannon to test 200 rps
+- Swagger jsdoc and ui integration
+- Sequelize ORM with postgres
+- available at https://yy-perf-analytics-api.herokuapp.com/
