@@ -5,6 +5,9 @@ ENV NPM_CONFIG_LOGLEVEL warn
 WORKDIR /usr/src/app
 
 COPY ./dist/ ./dist/
+COPY ./config/ ./config/
+COPY ./models/ ./models/
+COPY ./migrations/ ./migrations/
 
 COPY ecosystem.config.js package.json package-lock.json tsconfig.json .eslintrc.js ./
 

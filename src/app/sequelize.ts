@@ -7,7 +7,6 @@ const SequelizeRef = Sequelize as any
 SequelizeRef.postgres.DECIMAL.parse = (value: string) => parseFloat(value)
 import { AnalyticsAccount, AnalyticsEntry, ResourceAnalyticsEntry } from './models'
 
-const databaseUrl = config.get('databaseUrl')
 const sequelizeOptions: SequelizeOptions = {
   dialect: 'postgres',
   host: config.get('databaseHost'),
@@ -15,7 +14,7 @@ const sequelizeOptions: SequelizeOptions = {
   username: config.get('databaseUser'),
   password: config.get('databasePassword'),
   port: config.get('databasePort'),
-  ...(databaseUrl
+  ...(process.env.NODE_ENV === 'production'
     ? {
         dialectOptions: {
           ssl: {
@@ -28,7 +27,7 @@ const sequelizeOptions: SequelizeOptions = {
   models: [AnalyticsAccount, AnalyticsEntry, ResourceAnalyticsEntry]
 }
 
-export const sequelize = databaseUrl ? new Sequelize(databaseUrl, sequelizeOptions) : new Sequelize(sequelizeOptions)
+export const sequelize = new Sequelize(sequelizeOptions)
 
 sequelize.connectionManager.getConnection({
   type: 'read'
