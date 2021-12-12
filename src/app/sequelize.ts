@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize-typescript'
+import { Sequelize, SequelizeOptions } from 'sequelize-typescript'
 
 import config from './config'
 // https://github.com/sequelize/sequelize/issues/8019
@@ -7,15 +7,28 @@ const SequelizeRef = Sequelize as any
 SequelizeRef.postgres.DECIMAL.parse = (value: string) => parseFloat(value)
 import { AnalyticsAccount, AnalyticsEntry, ResourceAnalyticsEntry } from './models'
 
-export const sequelize = new Sequelize({
+const databaseUrl = config.get('databaseUrl')
+const sequelizeOptions: SequelizeOptions = {
+  dialect: 'postgres',
   host: config.get('databaseHost'),
   database: config.get('databaseName'),
-  dialect: 'postgres',
-  username: 'postgres',
-  password: 'postgres',
+  username: config.get('databaseUser'),
+  password: config.get('databasePassword'),
   port: config.get('databasePort'),
+  ...(databaseUrl
+    ? {
+        dialectOptions: {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
+        }
+      }
+    : {}),
   models: [AnalyticsAccount, AnalyticsEntry, ResourceAnalyticsEntry]
-})
+}
+
+export const sequelize = databaseUrl ? new Sequelize(databaseUrl, sequelizeOptions) : new Sequelize(sequelizeOptions)
 
 sequelize.connectionManager.getConnection({
   type: 'read'

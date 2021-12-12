@@ -29,7 +29,13 @@ const config = convict({
     doc: 'Perf analytics dashboard host',
     format: String,
     default: 'http://localhost:9000',
-    env: 'PERF_ANALYTICS_API'
+    env: 'PERF_ANALYTICS_DASHBOARD_URL'
+  },
+  databaseHost: {
+    doc: 'Database Host',
+    format: String,
+    default: 'localhost',
+    env: 'DATABASE_HOST'
   },
   databaseName: {
     doc: 'Name of the database',
@@ -43,11 +49,23 @@ const config = convict({
     default: 5432,
     env: 'DATABASE_PORT'
   },
-  databaseHost: {
-    doc: 'Database Host',
+  databaseUser: {
+    doc: 'Database username',
     format: String,
-    default: 'localhost',
-    env: 'DATABASE_HOST'
+    default: 'postgres',
+    env: 'DATABASE_USER'
+  },
+  databasePassword: {
+    doc: 'Database password',
+    format: String,
+    default: 'postgres',
+    env: 'DATABASE_PASSWORD'
+  },
+  databaseUrl: {
+    doc: 'Database url',
+    format: String,
+    default: '',
+    env: 'DATABASE_URL'
   }
 })
 
