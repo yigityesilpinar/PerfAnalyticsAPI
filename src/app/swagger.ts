@@ -23,7 +23,8 @@ const options: Options = {
     {
       url: 'http://localhost:8080',
       description: 'Development server'
-    }
+    },
+    { url: 'https://yy-perf-analytics-api.herokuapp.com', description: 'Production server' }
   ]
 }
 
