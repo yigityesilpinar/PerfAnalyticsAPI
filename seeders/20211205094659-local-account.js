@@ -16,7 +16,7 @@ module.exports = {
           {
             perfAnalyticsId: 'abcdefghjklmn',
             accountName: 'Local test account',
-            allowedDomains: '["http://localhost:3000","http://localhost:9000"]',
+            allowedOrigins: '["http://localhost:3000","http://localhost:9000"]',
             createdAt: new Date(),
             updatedAt: new Date()
           }

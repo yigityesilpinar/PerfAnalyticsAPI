@@ -11,6 +11,10 @@
     "outDir": "build",
      "resolveJsonModule": true,
     "baseUrl": ".",
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ],
     "paths": {
       "app/*": [
         "src/app/*"

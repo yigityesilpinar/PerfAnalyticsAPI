@@ -4,7 +4,7 @@
 ./node_modules/.bin/sequelize model:generate --name AnalyticsAccount --attributes \
 perfAnalyticsId:string,\
 accountName:string,\
-allowedDomains:string
+allowedOrigins:string
 
 
 

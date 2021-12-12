@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   AnalyticsAccount.init({
     perfAnalyticsId: DataTypes.STRING,
     accountName: DataTypes.STRING,
-    allowedDomains: DataTypes.STRING
+    allowedOrigins: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'AnalyticsAccount',

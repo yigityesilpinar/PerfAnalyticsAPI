@@ -3,8 +3,12 @@ import { body, validationResult } from 'express-validator'
 import { fn, col, cast } from 'sequelize'
 import ResourceAnalyticsEntry from '../../models/ResourceAnalyticsEntry'
 
-import { analyticsAccountRepository, resourceAnalyticsEntryRepository } from '../../sequelize'
-import { makeFilterByDateRange, onAccountNotFound, onBadRequest, onInternalError } from '../utils'
+import {
+  accountPostSecurityMiddleware,
+  dashboardAnalyticsFetchSecurityMiddleware
+} from '../../middlewares/corsMiddleWare'
+import { resourceAnalyticsEntryRepository } from '../../sequelize'
+import { makeFilterByDateRange, onBadRequest, onInternalError } from '../utils'
 
 export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
   /**
@@ -63,8 +67,8 @@ export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
    *         description: OK
    */
   const validations = [body('*.analyzeStartAt').isISO8601(), body('*.analyzeSessionUUID').isString().notEmpty()]
-  routes.post('/account/:id/resourceAnalytics', ...validations, async (req, res) => {
-    if (!('length' in req.body || !req.params.id)) {
+  routes.post('/account/:id/resourceAnalytics', ...validations, accountPostSecurityMiddleware, async (req, res) => {
+    if (!('length' in req.body || !req.params.id || !req.foundAccount)) {
       return onBadRequest(res)
     }
     const errors = validationResult(req)
@@ -72,24 +76,12 @@ export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
       return onBadRequest(res, errors)
     }
     try {
-      const { id } = req.params
-      const foundAccount = await analyticsAccountRepository.findOne({
-        where: {
-          id: parseInt(id, 10)
-        }
-      })
-      if (foundAccount) {
-        const mappedEntries = req.body.map((it: Record<string, unknown>) => ({
-          ...it,
-          accountId: id
-        }))
-        await resourceAnalyticsEntryRepository.bulkCreate(mappedEntries)
-        // eslint-disable-next-line no-console
-        console.log(`success at post /account/${id}/resourceAnalytics`)
-        res.status(200).send('ok')
-      } else {
-        return onAccountNotFound(res)
-      }
+      const mappedEntries = req.body.map((it: Record<string, unknown>) => ({
+        ...it,
+        accountId: req.foundAccount.id
+      }))
+      await resourceAnalyticsEntryRepository.bulkCreate(mappedEntries)
+      res.status(200).send('ok')
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)
@@ -163,7 +155,7 @@ export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
    *                       description: The ISO Date string of the analytic field collection time.
    *                       example: 2021-12-03T23:04:52.000Z
    */
-  routes.get('/account/:id/resourceAnalytics/:field', async (req, res) => {
+  routes.get('/account/:id/resourceAnalytics/:field', dashboardAnalyticsFetchSecurityMiddleware, async (req, res) => {
     if (!req.params.id) {
       return onBadRequest(res)
     }
@@ -282,46 +274,50 @@ export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
    *                        description: Min [field] timing by resource type
    *                        example: 11.96
    */
-  routes.get('/account/:id/resourceAnalyticsByType/:field', async (req, res) => {
-    if (!req.params.id) {
-      return onBadRequest(res)
+  routes.get(
+    '/account/:id/resourceAnalyticsByType/:field',
+    dashboardAnalyticsFetchSecurityMiddleware,
+    async (req, res) => {
+      if (!req.params.id) {
+        return onBadRequest(res)
+      }
+      if (!req.params.field) {
+        return onBadRequest(res, 'Paramater "field" is missing')
+      }
+      if (!ResourceAnalyticsEntry.rawAttributes[req.params.field]) {
+        return onBadRequest(res, `Paramater "${req.params.field}" does not exist`)
+      }
+      try {
+        const { id, field } = req.params
+        const data = await resourceAnalyticsEntryRepository.findAll({
+          group: ['initiatorType'],
+          attributes: [
+            'initiatorType',
+            [cast(fn('count', col(field)), 'int'), 'count'],
+            [fn('avg', col(field)), 'avg'],
+            [fn('avg', col(field)), 'avg'],
+            [fn('max', col(field)), 'max'],
+            [fn('min', col(field)), 'min']
+          ],
+          where: {
+            accountId: id,
+            ...makeFilterByDateRange({
+              fieldName: 'analyzeStartAt',
+              start: typeof req.query.start === 'string' ? req.query.start : undefined,
+              end: typeof req.query.end === 'string' ? req.query.end : undefined
+            })
+          }
+        })
+        // eslint-disable-next-line no-console
+        res.status(200).json({
+          status: 'ok',
+          data
+        })
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err)
+        return onInternalError(res, err)
+      }
     }
-    if (!req.params.field) {
-      return onBadRequest(res, 'Paramater "field" is missing')
-    }
-    if (!ResourceAnalyticsEntry.rawAttributes[req.params.field]) {
-      return onBadRequest(res, `Paramater "${req.params.field}" does not exist`)
-    }
-    try {
-      const { id, field } = req.params
-      const data = await resourceAnalyticsEntryRepository.findAll({
-        group: ['initiatorType'],
-        attributes: [
-          'initiatorType',
-          [cast(fn('count', col(field)), 'int'), 'count'],
-          [fn('avg', col(field)), 'avg'],
-          [fn('avg', col(field)), 'avg'],
-          [fn('max', col(field)), 'max'],
-          [fn('min', col(field)), 'min']
-        ],
-        where: {
-          accountId: id,
-          ...makeFilterByDateRange({
-            fieldName: 'analyzeStartAt',
-            start: typeof req.query.start === 'string' ? req.query.start : undefined,
-            end: typeof req.query.end === 'string' ? req.query.end : undefined
-          })
-        }
-      })
-      // eslint-disable-next-line no-console
-      res.status(200).json({
-        status: 'ok',
-        data
-      })
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
-      return onInternalError(res, err)
-    }
-  })
+  )
 }

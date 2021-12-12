@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { analyticsAccountRepository } from '../../sequelize'
-import { onAccountNotFound, onBadRequest, onInternalError } from '../utils'
+import { accountFetchSecurityMiddleware } from '../../middlewares/corsMiddleware'
+import { onBadRequest } from '../utils'
 
 export const makeAnalyticsAccountRoute = (routes: Router) => {
   /**
@@ -52,32 +52,16 @@ export const makeAnalyticsAccountRoute = (routes: Router) => {
    *                        description: Name of the analytics account.
    *                        example: Local test account
    */
-  routes.get('/account/:perfAnalyticsId', async (req, res) => {
-    if (!req.params.perfAnalyticsId) {
+  routes.get('/account/:perfAnalyticsId', accountFetchSecurityMiddleware, (req, res) => {
+    if (!req.foundAccount) {
       return onBadRequest(res)
     }
-    const { perfAnalyticsId } = req.params
-    try {
-      const foundAccount = await analyticsAccountRepository.findOne({
-        where: {
-          perfAnalyticsId
-        }
-      })
-      if (foundAccount) {
-        return res.status(200).json({
-          status: 'ok',
-          data: {
-            id: foundAccount.id,
-            accountName: foundAccount.accountName
-          }
-        })
-      } else {
-        return onAccountNotFound(res)
+    return res.status(200).json({
+      status: 'ok',
+      data: {
+        id: req.foundAccount.id,
+        accountName: req.foundAccount.accountName
       }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
-      return onInternalError(res, err)
-    }
+    })
   })
 }

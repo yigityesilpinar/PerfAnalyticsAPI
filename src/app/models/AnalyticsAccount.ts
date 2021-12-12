@@ -14,7 +14,7 @@ class AnalyticsAccount extends Model {
   accountName: string
 
   @Column
-  allowedDomains: string
+  allowedOrigins: string
 }
 
 export default AnalyticsAccount

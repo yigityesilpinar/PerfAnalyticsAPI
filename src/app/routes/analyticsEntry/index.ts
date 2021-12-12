@@ -3,8 +3,12 @@ import { body, validationResult } from 'express-validator'
 
 import AnalyticsEntry from '../../models/AnalyticsEntry'
 
-import { analyticsAccountRepository, analyticsEntryRepository } from '../../sequelize'
-import { makeFilterByDateRange, onAccountNotFound, onBadRequest, onInternalError } from '../utils'
+import {
+  accountPostSecurityMiddleware,
+  dashboardAnalyticsFetchSecurityMiddleware
+} from '../../middlewares/corsMiddleWare'
+import { analyticsEntryRepository } from '../../sequelize'
+import { makeFilterByDateRange, onBadRequest, onInternalError } from '../utils'
 
 export const makeAnalyticsEntryRoute = (routes: Router) => {
   /**
@@ -84,8 +88,8 @@ export const makeAnalyticsEntryRoute = (routes: Router) => {
    *         description: OK
    */
   const validations = [body('analyzeStartAt').isISO8601(), body('analyzeSessionUUID').isString().notEmpty()]
-  routes.post('/account/:id/analytics', ...validations, async (req, res) => {
-    if (!req.params.id) {
+  routes.post('/account/:id/analytics', ...validations, accountPostSecurityMiddleware, async (req, res) => {
+    if (!req.foundAccount) {
       return onBadRequest(res)
     }
     const errors = validationResult(req)
@@ -93,24 +97,11 @@ export const makeAnalyticsEntryRoute = (routes: Router) => {
       return onBadRequest(res, errors)
     }
     try {
-      const { id } = req.params
-      const foundAccount = await analyticsAccountRepository.findOne({
-        where: {
-          id: parseInt(id, 10)
-        }
+      await analyticsEntryRepository.create({
+        ...req.body,
+        accountId: req.foundAccount.id
       })
-      if (foundAccount) {
-        await analyticsEntryRepository.create({
-          ...req.body,
-          accountId: id
-        })
-        // eslint-disable-next-line no-console
-        console.log(`success at post /account/${id}/analytics`)
-        // cors blocks the response if its json type
-        res.status(200).send('ok')
-      } else {
-        return onAccountNotFound(res)
-      }
+      res.status(200).send('ok')
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)
@@ -183,7 +174,7 @@ export const makeAnalyticsEntryRoute = (routes: Router) => {
    *                        description: The ISO Date string of the analytic field collection time.
    *                        example: 2021-12-03T23:04:52.000Z
    */
-  routes.get('/account/:id/analytics/:field', async (req, res) => {
+  routes.get('/account/:id/analytics/:field', dashboardAnalyticsFetchSecurityMiddleware, async (req, res) => {
     if (!req.params.id) {
       return onBadRequest(res)
     }

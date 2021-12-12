@@ -14,7 +14,7 @@ module.exports = {
       accountName: {
         type: Sequelize.STRING
       },
-      allowedDomains: {
+      allowedOrigins: {
         type: Sequelize.STRING
       },
       createdAt: {
