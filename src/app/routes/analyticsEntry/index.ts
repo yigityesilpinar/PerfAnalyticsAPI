@@ -6,7 +6,7 @@ import AnalyticsEntry from '../../models/AnalyticsEntry'
 import {
   accountPostSecurityMiddleware,
   dashboardAnalyticsFetchSecurityMiddleware
-} from '../../middlewares/corsMiddleWare'
+} from '../../middlewares/corsMiddleware'
 import { analyticsEntryRepository } from '../../sequelize'
 import { makeFilterByDateRange, onBadRequest, onInternalError } from '../utils'
 

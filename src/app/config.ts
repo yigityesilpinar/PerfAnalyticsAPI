@@ -30,6 +30,24 @@ const config = convict({
     format: String,
     default: 'http://localhost:9000',
     env: 'PERF_ANALYTICS_API'
+  },
+  databaseName: {
+    doc: 'Name of the database',
+    format: String,
+    default: 'local-test',
+    env: 'DATABASE_NAME'
+  },
+  databasePort: {
+    doc: 'Database port',
+    format: Number,
+    default: 5432,
+    env: 'DATABASE_PORT'
+  },
+  databaseHost: {
+    doc: 'Database Host',
+    format: String,
+    default: 'localhost',
+    env: 'DATABASE_HOST'
   }
 })
 

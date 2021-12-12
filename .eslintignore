@@ -7,3 +7,4 @@ seeders
 config
 migrations
 tests/**
+ecosystem.config.js

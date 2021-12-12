@@ -6,7 +6,7 @@ import ResourceAnalyticsEntry from '../../models/ResourceAnalyticsEntry'
 import {
   accountPostSecurityMiddleware,
   dashboardAnalyticsFetchSecurityMiddleware
-} from '../../middlewares/corsMiddleWare'
+} from '../../middlewares/corsMiddleware'
 import { resourceAnalyticsEntryRepository } from '../../sequelize'
 import { makeFilterByDateRange, onBadRequest, onInternalError } from '../utils'
 
