@@ -87,7 +87,15 @@ export const makeAnalyticsEntryRoute = (routes: Router) => {
    *       200:
    *         description: OK
    */
-  const validations = [body('analyzeStartAt').isISO8601(), body('analyzeSessionUUID').isString().notEmpty()]
+  const validations = [
+    body('analyzeStartAt').isISO8601(),
+    body('analyzeSessionUUID').isString().notEmpty(),
+    ...Object.keys(analyticsEntryRepository.rawAttributes)
+      .filter(
+        (it) => !['id', 'accountId', 'analyzeStartAt', 'analyzeSessionUUID', 'createdAt', 'updatedAt'].includes(it)
+      )
+      .map((key) => body(key).isNumeric().notEmpty())
+  ]
   routes.post('/account/:id/analytics', ...validations, accountPostSecurityMiddleware, async (req, res) => {
     if (!req.foundAccount) {
       return onBadRequest(res)

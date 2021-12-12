@@ -66,7 +66,13 @@ export const makeResourceAnalyticsEntryRoute = (routes: Router) => {
    *       200:
    *         description: OK
    */
-  const validations = [body('*.analyzeStartAt').isISO8601(), body('*.analyzeSessionUUID').isString().notEmpty()]
+  const validations = [
+    body('*.analyzeStartAt').isISO8601(),
+    ...['analyzeSessionUUID', 'initiatorType', 'name'].map((key) => body(`*.${key}`).isString().notEmpty()),
+    ...['requestTime', 'responseTime', 'fetchTime', 'redirectTime'].map((key) =>
+      body(`*.${key}`).isNumeric().notEmpty()
+    )
+  ]
   routes.post('/account/:id/resourceAnalytics', ...validations, accountPostSecurityMiddleware, async (req, res) => {
     if (!('length' in req.body || !req.params.id || !req.foundAccount)) {
       return onBadRequest(res)

@@ -1,26 +1,22 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true, // required for Decorators
-    "emitDecoratorMetadata": true,  // required for Decorators
+    "emitDecoratorMetadata": true, // required for Decorators
     "module": "commonjs",
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "build",
-     "resolveJsonModule": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
     "baseUrl": ".",
-    "typeRoots": [
-      "./src/types",
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "paths": {
-      "app/*": [
-        "src/app/*"
-      ],
+      "app/*": ["src/app/*"],
       "*": ["node_modules/*"]
     }
   },
+  "exclude": ["./tests/", "./node_modules/", "./dist/"],
   "include": ["src/**/*"]
 }

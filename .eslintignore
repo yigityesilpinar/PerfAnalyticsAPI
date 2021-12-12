@@ -6,3 +6,4 @@ models
 seeders
 config
 migrations
+tests/**
